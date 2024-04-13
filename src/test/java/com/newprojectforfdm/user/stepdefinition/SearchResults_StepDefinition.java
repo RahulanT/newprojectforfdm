@@ -41,7 +41,7 @@ public class SearchResults_StepDefinition{
 	}
 	
 	@Then("User Sets Filter {string} to {string}")
-	public void user_sets_filter_to(String string, String string2) {
+	public void user_sets_filter_to(String string, String string2) throws InterruptedException {
 		assertEquals ( string2 , searchresultspage.setFilterData(string , string2) );
 	}
 	

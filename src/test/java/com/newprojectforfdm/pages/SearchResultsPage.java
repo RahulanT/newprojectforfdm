@@ -3,6 +3,7 @@ package com.newprojectforfdm.pages;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -43,11 +44,11 @@ public class SearchResultsPage extends BrowserUtilities{
 	@FindBy(xpath = "//div[contains(@class , 'searchResultHeader')]//span[contains(text() , 'results')]")
 	WebElement resultsHeader;
 
-	@FindBy(xpath = "//li[@class = 'clearAll_1WS6s']")
+	@FindBy(xpath = "//button[text() = 'Clear filters']")
 	WebElement clearfilterButton;
 	
 	
-	@FindBy(xpath = "//ul[@class = 'container_1lbbF']")
+	@FindBy(xpath = "//ul[@class = 'container_LfTg2']")
 	WebElement activeFilterList;
 	
 	public void filterResults() {
@@ -73,35 +74,55 @@ public class SearchResultsPage extends BrowserUtilities{
 		return resultsHeader.getText();
 	}
 	
-	public String setFilterData(String filterName , String filterValue ) {
+	public String setFilterData(String filterName , String filterValue ) throws InterruptedException {
 		
-//		driver.findElement(By.xpath("//div[@class = 'facetsContainer_2DDqq']//span[text()= '" + filterName + "']")).click();
-//		//Thread.sleep(3000);
-//		driver.findElement(By.xpath("//div[@class = 'body_maqiI down_1fxZR open_2zRYc']//li//span[@class = 'productName_3Ikre' and text()='"+ filterValue +"']")).click();
-//		
-	      Actions a = new Actions(driver);
+
+	  Actions a = new Actions(driver);
 		
 		
-		WebElement f1 = driver.findElement(By.xpath("//div[@class = 'facetsContainer_2DDqq']//span[text()= '" + filterName + "']"));
-		//Thread.sleep(3000);
-//		WebElement f2 = driver.findElement(By.xpath("//div[@class = 'body_maqiI down_1fxZR open_2zRYc']//li//span[@class = 'productName_3Ikre' and text()='"+ filterValue +"']"));
-      a.moveToElement(f1);
-      a.perform();
+	  WebElement f1 = driver.findElement(By.xpath("//div[@class = 'facetsContainer_2DDqq']//span[text()= '" + filterName + "']"));
+
+	  a.moveToElement(f1).perform();
+      
+      setExplicitWait(5);
+      waitForVisibilityOf(f1);
+      
       f1.click();
-      WebElement f2 = driver.findElement(By.xpath("//div[@class = 'body_maqiI down_1fxZR open_2zRYc']//li//span[@class = 'productName_3Ikre' and text()='"+ filterValue +"']"));
+      
+      WebElement expandDiv = driver.findElement(By.xpath("//div[@class='style-module_bodyContainer__sA-jP style-module_down__z2R7a']"));
+      
+      WebElement f2 = driver.findElement(By.xpath("//*[@class = 'productName_3Ikre' and text()='"+ filterValue +"']"));
+            
+      
+//	  a.moveToElement(f2).perform();
 
-      a.moveToElement(f2);
-      a.perform();
+      setExplicitWait(5);
+//      waitForVisibilityOf(f2);
+//      waitForElementToBeClickable(f2);
+     
+  
+      String scrollElementIntoMiddle = "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
+                                                  + "var elementTop = arguments[0].getBoundingClientRect().top;"
+                                                  + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
+
+      ((JavascriptExecutor) driver).executeScript(scrollElementIntoMiddle, f2);
+      
       f2.click();
-//		f1.click();
-//		f2.click();
+      
+      Thread.sleep(3000);
+      
+      
+//      ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", f1);
+//      f1.click();
 
-		WebElement fV = driver.findElement(By.xpath("//li[@class = 'pill_2ra42' and text()='"+filterValue +"']"));
+
+
+		WebElement fV = driver.findElement(By.xpath("//li[@class = 'pill_3TQOk' and text()='"+filterValue +"']"));
 		
-		setExplicitWait(5);
-		waitForVisibilityOfElementLocated(By.xpath("//li[@class = 'pill_2ra42' and text()='"+filterValue +"']"));
+	//		setExplicitWait(5);
+		waitForVisibilityOf(fV);
 		
-		return driver.findElement(By.xpath("//li[@class = 'pill_2ra42' and text()='"+filterValue +"']")).getText();
+		return fV.getText();
 		 
 	}
 	
@@ -132,7 +153,7 @@ public class SearchResultsPage extends BrowserUtilities{
 	public int numberOfActiveFilters () {
 		List <WebElement> activeFiltersList ;
 
-		activeFiltersList = activeFilterList.findElements(By.xpath("//li[@class = 'pill_2ra42']")); 
+		activeFiltersList = activeFilterList.findElements(By.xpath("//li[@class = 'pill_3TQOk']")); 
 
 		return activeFiltersList.size() ;
 		
